@@ -11,7 +11,7 @@ function demo
     
     % compile_d2b_dp;
     
-    debug = 1; % If set to 1, the dy
+    debug = 1; % If set to 1, Dynamic Programming is performed faster using a coarser grid of states.
     
     rng(0);
     
@@ -138,7 +138,7 @@ function demo
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    % non-parametric DDM (nDDM) has three fitted parameters in theta.
+    % Nonparametric-bound Drift-Diffusion Model (npb-DDM) has three fitted parameters in theta.
     % theta(1): kappa
     % theta(2): mean of non-decision time
     % theta(3): s.d. of non-decision time
@@ -159,16 +159,16 @@ function demo
     init_guess = [10, 0.1, 0.1, 0, 0]; % initial guess for the fit
     plot_flag = 0;
     
-    % Fitting a nDDM.
+    % Fitting a npb-DDM.
     % Once you save the result, you can load the result from next time.
-    if 0
+    if 1
         opt = do_fit(@wrapper_dtb_empiricalbound_rt, dat, tl, th, init_guess, pars);
-        [~,P] = wrapper_dtb_empiricalbound_rt(fn_wrapper, opt.theta, dat.rt, dat.coh, dat.choice, dat.c, pars, plot_flag);
+        [~,P] = wrapper_dtb_empiricalbound_rt(opt.theta, dat.rt, dat.coh, dat.choice, dat.c, pars, plot_flag);
         P.optim = opt;
         save('opt.mat','P');
     else
         load('opt.mat','P');
-        % [err,~] = feval(fn_wrapper,[kappa, ndt_m, ndt_s, 0, 0], dat.rt, dat.coh, dat.choice, dat.c, pars, plot_flag);
+        % [err,~] = wrapper_dtb_empiricalbound_rt([kappa, ndt_m, ndt_s, 0, 0], dat.rt, dat.coh, dat.choice, dat.c, pars, plot_flag);
     end    
     rt_lo = prctile(dat.rt,1);  %  1st percentile
     rt_hi = prctile(dat.rt,99); % 99th percentile
@@ -182,7 +182,7 @@ function demo
     plot(t_axis(pick1),Blo(pick1),'b-')    
     plot(P.t(pick2),P.Blo(pick2),'r-')
     axis([0 3 -1.5 1.5]);
-    legend('Ground truth','fit by nDDM');
+    legend('Ground truth','fit by npb-DDM');
     
     %%%%%%%%%%%%%%%%%%%%%%%%% Dynamic Programming %%%%%%%%%%%%%%%%%%%%%%%%%
     fprintf('Running DP\n\n ')
@@ -245,7 +245,7 @@ function demo
         end
     end
     file_name = [file_name,'.mat'];
-    save_dir = fullfile(get_root,'nDDM\results\empirical_max_likelihood\ndt_s_fit','TlistenVal');
+    save_dir = fullfile(get_root,'npb-DDM\results\empirical_max_likelihood\ndt_s_fit','TlistenVal');
     makedir(save_dir);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
